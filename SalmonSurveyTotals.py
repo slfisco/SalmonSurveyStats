@@ -30,7 +30,6 @@ def getSurveyStats():
             COALESCE(SUM(CASE WHEN Species = 'Coho' AND Type = 'Live' THEN Quantity END), 0) AS live_coho_count,
             COALESCE(SUM(CASE WHEN Species in ('Resident_Cutthroat', 'Sea-run_Cutthroat', 'Cutthroat') AND Type = 'Dead' THEN quantity END), 0) AS dead_cutthroat_count,
             COALESCE(SUM(CASE WHEN Species in ('Resident_Cutthroat', 'Sea-run_Cutthroat', 'Cutthroat') AND Type = 'Live' THEN Quantity END), 0) as live_cutthroat_count,
-            COALESCE(SUM(CASE WHEN Species = 'Coho' AND Type = 'Live' THEN Quantity END), 0) AS live_coho_count,
             COALESCE(SUM(CASE WHEN Species = 'Unknown' AND Type = 'Dead' THEN quantity END), 0) AS dead_unknown_count,
             COALESCE(SUM(CASE WHEN Species = 'Unknown' AND Type = 'Live' THEN quantity END), 0) AS live_unknown_count,
             COALESCE(SUM(CASE WHEN Type = 'Redd' THEN Quantity END), 0) as redd_count
@@ -63,6 +62,7 @@ def getSurveyStats():
         sc.live_chum_count,
         sc.dead_coho_count,
         sc.live_coho_count,
+        sc.dead_cutthroat_count,
         sc.live_cutthroat_count,
         sc.redd_count,
         rc.running_total_dead_chum,
@@ -130,7 +130,8 @@ def generateSalmonStewardsData(df):
                 COALESCE(SUM(CASE WHEN Species = 'Chum' AND Type = 'Dead' THEN quantity END), 0) AS [Dead Chum],
                 COALESCE(SUM(CASE WHEN Species = 'Coho' AND Type = 'Dead' THEN quantity END), 0) AS [Dead Coho],
                 COALESCE(SUM(CASE WHEN Species in ('Resident_Cutthroat', 'Sea-run_Cutthroat', 'Cutthroat') AND Type = 'Dead' THEN quantity END), 0) AS [Dead Cutthroat],
-                COALESCE(SUM(CASE WHEN Species = 'Unknown' AND Type = 'Dead' THEN quantity END), 0) AS [Dead Unknown Salmonids]  
+                COALESCE(SUM(CASE WHEN Species = 'Unknown' AND Type = 'Dead' THEN quantity END), 0) AS [Dead Unknown Salmonids],
+                COALESCE(SUM(CASE WHEN Type = 'Redd' THEN quantity END), 0) AS [Redds]
             FROM
                 salmon
             GROUP BY
@@ -151,7 +152,7 @@ class AssertStatsMatchExpected(unittest.TestCase):
     def testYearlyTotals(self):
         actual = df.loc[df['Survey_Date'] == '2023-10-31']
         # compare 2023-10-31 stats to expected values
-        expectedValues = ['2023-10-31', 6, 15, 21, 3, 8, 3, 1, 1, 0, 5, 13, 13, 14, 0, 1, 0, 5, 18, 33]
+        expectedValues = ['2023-10-31', 6, 15, 21, 3, 8, 3, 1, 0, 1, 0, 5, 13, 13, 14, 0, 1, 0, 5, 18, 33]
         for i in range(len(expectedValues)):
             self.assertEqual(actual[actual.columns[i]].item(), expectedValues[i])
     def runTest(self):
