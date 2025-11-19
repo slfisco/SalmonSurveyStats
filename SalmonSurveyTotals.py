@@ -4,7 +4,7 @@ from datetime import datetime
 
 connection = sqlite3.connect(":memory:")
 cursor = connection.cursor()
-uri = 'https://kf.kobotoolbox.org/api/v2/assets/ae8BCoHi4EmwnzP2ShmSUw/data/?format=json'
+uri = 'https://kf.kobotoolbox.org/api/v2/assets/a5WFFCGawCP3aTLHdRjrca/data/?format=json'
 
 create_salmon_table_query = '''
     CREATE TABLE IF NOT EXISTS salmon (
